@@ -145,6 +145,7 @@ class  _RegisterPageState extends State<RegisterPage> {
                             if(text.length > 50){
                               return "Name can\'t be more than 50";
                             }
+                            return null;
                           },
                           onChanged: (text) => setState((){
                             nameTextEditingController.text = text;
@@ -170,7 +171,7 @@ class  _RegisterPageState extends State<RegisterPage> {
                             prefixIcon: Icon(Icons.email, color: darkTheme ? Colors.amber.shade400 : Colors.grey,),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text){
+                          validator: (text) {
                             if(text == null || text.isEmpty){
                               return 'Email can\'t be empty';
                             }
@@ -183,6 +184,7 @@ class  _RegisterPageState extends State<RegisterPage> {
                             if(text.length > 99){
                               return "Email can\'t be more than 100";
                             }
+                            return null;
                           },
                           onChanged: (text) => setState((){
                             emailTextEditingController.text = text;
@@ -231,7 +233,7 @@ class  _RegisterPageState extends State<RegisterPage> {
                             prefixIcon: Icon(Icons.home , color: darkTheme ? Colors.amber.shade400 : Colors.grey,),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text){
+                          validator: (text) {
                             if(text == null || text.isEmpty){
                               return 'Address can\'t be empty';
                             }
@@ -241,6 +243,7 @@ class  _RegisterPageState extends State<RegisterPage> {
                             if(text.length > 99){
                               return "Address can\'t be more than 100";
                             }
+                            return null;
                           },
                           onChanged: (text) => setState((){
                             addressTextEditingController.text = text;

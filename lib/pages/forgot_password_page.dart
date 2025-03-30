@@ -121,9 +121,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             prefixIcon: Icon(Icons.person, color: darkTheme ? Colors.amber.shade400 : Colors.grey,),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text){
+                          validator: (text) {
                             if(text == null || text.isEmpty){
-                              return 'Email can\'t be empty';
+                              return "Email can't be empty";
                             }
                             if(EmailValidator.validate(text) == true){
                               return null;
@@ -132,8 +132,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               return "Please enter a valid email";
                             }
                             if(text.length > 99){
-                              return "Email can\'t be more than 100";
+                              return "Email can't be more than 100";
                             }
+                            return null;
                           },
                           onChanged: (text) => setState((){
                             emailTextEditingController.text = text;

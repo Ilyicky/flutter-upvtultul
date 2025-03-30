@@ -1,7 +1,6 @@
 import 'package:demo_app/global/global.dart';
 import 'package:demo_app/pages/forgot_password_page.dart';
-import 'package:demo_app/pages/main_page.dart';
-import 'package:demo_app/pages/maps_page.dart';
+import 'package:demo_app/pages/home_management.dart';
 import 'package:demo_app/pages/register_page.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       ).then((auth) async {
         currentUser = auth.user;
         await Fluttertoast.showToast(msg: "Successfully Logged In");
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MapPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (c) => HomeManagement()));
       }).catchError((errorMessage) {
         Fluttertoast.showToast(msg: "Error occurred: \n $errorMessage");
       });
