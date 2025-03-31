@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:demo_app/constants/restaurants.dart';
 import 'package:flutter/material.dart';
@@ -147,35 +146,38 @@ class _RestaurantsMapState extends State<RestaurantsMap> {
       appBar: AppBar(
         title: const Text('Restaurants Map'),
       ),
-      body: _initialCameraOptions == null
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          // MapWidget for displaying the map
-          MapWidget(
-            key: const ValueKey("mapWidget"),
-            onMapCreated: _onMapCreated,
-            cameraOptions: _initialCameraOptions!,
-            styleUri: MapboxStyles.STANDARD,
-            mapOptions: _mapOptions,
-          ),
-          // CarouselSlider for displaying the carousel
-          CarouselSlider(
-            items: carouselItems, // named argument
-            options: CarouselOptions( // named argument
-              height: 100,
-              viewportFraction: 0.6,
-              initialPage: 0,
-              enableInfiniteScroll: false,
-              scrollDirection: Axis.horizontal,
-              onPageChanged: (int index, CarouselPageChangedReason reason) {
-                setState(() {
-                  pageIndex = index;
-                });
-              },
-            ),
-          ),
-        ],
+      body:SafeArea(
+        child:Stack(
+          children:[
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: 
+              _initialCameraOptions == null ? const Center(child: CircularProgressIndicator()):
+              MapWidget(
+                key: const ValueKey("mapWidget"),
+                onMapCreated: _onMapCreated,
+                cameraOptions: _initialCameraOptions!,
+                styleUri: MapboxStyles.STANDARD,
+                mapOptions: _mapOptions,
+              ),
+            ), //SizedBox
+            CarouselSlider(
+              items: carouselItems, // named argument
+              options: CarouselOptions( // named argument
+                height: 130,
+                viewportFraction: 0.6,
+                initialPage: 0,
+                enableInfiniteScroll: false,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (int index, CarouselPageChangedReason reason) {
+                  setState(() {
+                    pageIndex = index;
+                  });
+                },
+              ),
+            ),         
+          ]
+        )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
