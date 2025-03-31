@@ -1,8 +1,12 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:demo_app/constants/restaurants.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 //import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../helpers/shared_prefs.dart';
+import '../widgets/carousel_card.dart';
 
 class RestaurantsMap extends StatefulWidget {
   const RestaurantsMap({super.key});
@@ -17,11 +21,34 @@ class _RestaurantsMapState extends State<RestaurantsMap> {
   Point? point;
   CameraOptions? _initialCameraOptions;
   late MapOptions _mapOptions;
+  List<Map> carouselData = [];
+
+  int pageIndex = 0;
+  late List<Widget> carouselItems;
 
   @override
   void initState() {
     super.initState();
-    
+
+    for (int index = 0; index < restaurants.length; index++) {
+      num distance = getDistanceFromSharedPrefs(index) / 1000;
+      num duration = getDurationFromSharedPrefs(index) / 60;
+      carouselData.add({
+        'index': index,
+        'distance': distance,
+        'duration': duration
+      });
+    }
+    carouselData.sort((a, b) => a['duration'] < b['duration'] ? 0 : 1);
+
+    //Generate the list of carousel widgets
+    carouselItems = List<Widget>.generate(
+        restaurants.length,
+            (index) => carouselCard(
+            carouselData[index]['index'],
+            carouselData[index]['distance'],
+            carouselData[index]['duration']));
+
     _mapOptions = MapOptions(
       constrainMode: ConstrainMode.HEIGHT_ONLY,
       pixelRatio: 1.0,
@@ -29,7 +56,7 @@ class _RestaurantsMapState extends State<RestaurantsMap> {
 
     // Initialize point and camera options asynchronously
     _initializeMapData();
-    
+
     // Check location permissions
     _checkLocationPermission();
   }
@@ -91,7 +118,7 @@ class _RestaurantsMapState extends State<RestaurantsMap> {
       LocationComponentSettings(
         enabled: true,
         pulsingEnabled: true,
-        pulsingMaxRadius: 50.0,
+        pulsingMaxRadius: 30.0,
         showAccuracyRing: true,
         puckBearingEnabled: true,
         locationPuck: LocationPuck(
@@ -122,14 +149,34 @@ class _RestaurantsMapState extends State<RestaurantsMap> {
       ),
       body: _initialCameraOptions == null
           ? const Center(child: CircularProgressIndicator())
-          : MapWidget(
-              key: const ValueKey("mapWidget"),
-              onMapCreated: _onMapCreated,
-              cameraOptions: _initialCameraOptions!,
-              // onStyleLoadedListener: _onStyleLoadedListener,
-              styleUri: MapboxStyles.STANDARD,
-              mapOptions: _mapOptions,
+          : Column(
+        children: [
+          // MapWidget for displaying the map
+          MapWidget(
+            key: const ValueKey("mapWidget"),
+            onMapCreated: _onMapCreated,
+            cameraOptions: _initialCameraOptions!,
+            styleUri: MapboxStyles.STANDARD,
+            mapOptions: _mapOptions,
+          ),
+          // CarouselSlider for displaying the carousel
+          CarouselSlider(
+            items: carouselItems, // named argument
+            options: CarouselOptions( // named argument
+              height: 100,
+              viewportFraction: 0.6,
+              initialPage: 0,
+              enableInfiniteScroll: false,
+              scrollDirection: Axis.horizontal,
+              onPageChanged: (int index, CarouselPageChangedReason reason) {
+                setState(() {
+                  pageIndex = index;
+                });
+              },
             ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (mapboxMap != null && _initialCameraOptions != null) {
@@ -140,10 +187,10 @@ class _RestaurantsMapState extends State<RestaurantsMap> {
           }
         },
         child: const Icon(Icons.my_location),
-      ), 
+      ),
     );
   }
-  
+
   void _showPermissionDeniedDialog() {
     showDialog(
       context: context,
